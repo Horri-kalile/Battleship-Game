@@ -1,4 +1,5 @@
 import socket
+import random
 from GameRoom import GameRoom
 
 global rooms
@@ -30,6 +31,27 @@ def main():
                 # Send a confirmation message to the client
                 server_socket.sendto("connect".encode('utf-8'), address)
 
+                # If two players are connected, start the game
+                if can_start and find_room(address):
+                    found_room, _ = find_room(address)
+                    if not found_room.gameStarted:
+                        print("Room", found_room.id, "| GAME STARTS")
+                        update_game_started(found_room.id, True)
+
+                        first_address = found_room.player1
+                        second_address = found_room.player2
+
+                        message = "start;" + found_room.id
+
+                        # Randomly decide which player starts the game
+                        if random.randint(0, 1):
+                            print("Room", found_room.id, "| Player that begins:", first_address)
+                            server_socket.sendto((message + ";shoot").encode('utf-8'), first_address)
+                            server_socket.sendto((message + ";wait").encode('utf-8'), second_address)
+                        else:
+                            print("Room", found_room.id, "| Player that begins:", second_address)
+                            server_socket.sendto((message + ";shoot").encode('utf-8'), second_address)
+                            server_socket.sendto((message + ";wait").encode('utf-8'), first_address)
         except socket.error as e:
             print(f"Socket error: {e}")
             exit()
@@ -55,7 +77,24 @@ def add_player_to_rooms(player):
     new_room.player1 = player
     rooms.append(new_room)
     print(f"Created new room({new_room.id}) and added {player} as player 1")
-    return can_start
+    return can_start 
+    
+def update_game_started(room_id, new_value):
+    """Update the gameStarted status of a room."""
+    global rooms
+    for room in rooms:
+        if room.id == room_id:
+            room.gameStarted = new_value
+            break
+
+def find_room(player):
+    """Find the room where a player is located."""
+    for room in rooms:
+        if room.player1 == player:
+            return room, 1
+        elif room.player2 == player:
+            return room, 2
+    return None, -1
 
 if __name__ == "__main__":
     main()
