@@ -1,3 +1,6 @@
+import client_boardsets as boards
+import client_make_board as myboard
+
 def has_game_ended(board):
     h_counter = 0
     MAX_NUMBER_OF_X = 20
@@ -50,3 +53,28 @@ def get_shot(shot_board):
     except ValueError:
         print("Enter a numerical value in the range of 1-10!")
         return get_shot(shot_board)
+    
+def choose_board():
+    print("Create your board, you can use predefined layouts or create your own:")
+    print("Write 1 - if you want to create your own")
+    print("Write 2 - if you want to choose predefined set number 1")
+    print("Write 3 - if you want to choose predefined set number 2")
+    option = input("Your choice: ")
+    try:
+        option = int(option)
+        if option == 1:
+            board = myboard.make_user_board()
+        elif option == 2:
+            board = boards.board1
+        else:
+            board = boards.board2
+
+        return board
+    except ValueError:
+        print("Enter a number from 1 to 3")
+        choose_board()
+
+
+def generate_shots_board(rows, cols):
+    board = [['-' for _ in range(cols)] for _ in range(rows)]
+    return board
