@@ -1,3 +1,4 @@
+import os
 import client_boardsets as boards
 import client_make_board as myboard
 
@@ -78,3 +79,30 @@ def choose_board():
 def generate_shots_board(rows, cols):
     board = [['-' for _ in range(cols)] for _ in range(rows)]
     return board
+
+def print_board(board, shot_board):
+    separator = "=" * 80
+    print(separator, "\n")
+    print("Your board", "\t" * 4, "Your shots")
+    print("  1 2 3 4 5 6 7 8 9 10 			       1 2 3 4 5 6 7 8 9 10")
+    for rowB, rowS in zip(board, shot_board):
+        print(board.index(rowB) + 1, " ".join(rowB), "\t" * 3, board.index(rowB) + 1, " ".join(rowS))
+    print(separator, "\n")
+
+
+def show_rules():
+    print("LET'S START THE GAME")
+    print("RULES")
+    print("\tWrite 'end' to finish the game")
+    print("Your board")
+    print("\tThe 'X' sign represents a part of your ship")
+    print("\tThe 'H' sign indicates that a part of the ship has been hit")
+    print("\tThe 'M' sign indicates that the shot hit the water")
+    print("Your shots board")
+    print("\tThe 'H' sign indicates a successful shot")
+    print("\tThe 'M' sign indicates an unsuccessful shot")
+    input("Press ENTER to continue: ")
+    clear_console()
+
+def clear_console():
+    os.system('cls' if os.name == 'nt' else 'clear')
