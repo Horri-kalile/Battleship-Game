@@ -23,7 +23,6 @@ def is_ship_hit(board, x_coord, y_coord):
     if board[y_coord - 1][x_coord - 1] == "X":
         return True
     return False
-
     
 
 def get_shot(shot_board):
