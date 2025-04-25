@@ -40,3 +40,43 @@ def main():
                 board = choose_board()
                 clear_console()
                 print_board(board, shots_board)
+
+                 if action == "wait":
+                    print("Enemy's turn...")
+                elif action == "shoot":
+                    print("Your turn")
+                    x_coord, y_coord, end_game = get_shot(shots_board)
+                    if end_game:
+                        print("END, You give up")
+                        client_socket.sendto("end_you_won".encode('utf-8'), server_address)
+                        play_again()
+
+                    message = "shoots " + "(" + str(x_coord) + "," + str(y_coord) + ");" + str(
+                        client_address) + ";" + my_room_id
+                    client_socket.sendto(message.encode('utf-8'), server_address)
+                else:
+                    print("error occurred during message fetching")
+
+            elif response == "wait":
+                print("Enemy's turn...")
+
+            elif response == "shoot":
+                print("Your turn")
+                if not has_game_ended(shots_board):
+                    x_coord, y_coord, end_game = get_shot(shots_board)
+
+                    if end_game:
+                        print("END, YOU GIVE UP")
+                        client_socket.sendto("end_you_won".encode('utf-8'), server_address)
+                        play_again()
+
+                    message = "shoots " + "(" + str(x_coord) + "," + str(y_coord) + ");" + str(client_address) + ";" + my_room_id
+                    client_socket.sendto(message.encode('utf-8'), server_address)
+
+            elif response.startswith("check"):
+                try:
+                    coords = response.split(';')[0].removeprefix("check").replace('[', '').replace(']', '').replace("'", "").split(",")
+                    x_coord = coords[0]
+                    y_coords = coords[1]
+
+                    print("=" * 80)
