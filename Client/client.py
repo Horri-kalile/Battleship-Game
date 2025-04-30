@@ -1,8 +1,8 @@
 import socket
+
 from client_helpers import *
 
-
-lobal my_room_id
+global my_room_id
 my_room_id = ""
 
 
@@ -41,7 +41,7 @@ def main():
                 clear_console()
                 print_board(board, shots_board)
 
-                 if action == "wait":
+                if action == "wait":
                     print("Enemy's turn...")
                 elif action == "shoot":
                     print("Your turn")
@@ -80,3 +80,30 @@ def main():
                     y_coords = coords[1]
 
                     print("=" * 80)
+
+
+                    if is_ship_hit(board, int(x_coord), int(y_coords)):
+                        clear_console()
+                        is_successful = True
+                        print("ENEMY HIT YOUR SHIP")
+                        update_board(board, int(x_coord), int(y_coords), "H")
+                        print_board(board, shots_board)
+                    else:
+                        clear_console()
+                        is_successful = False
+                        print("ENEMY MISSED")
+                        update_board(board, int(x_coord), int(y_coords), "M")
+                        print_board(board, shots_board)
+
+                    print("Enemy shoots on:", x_coord, ',', y_coords)
+                    msg = "result;" + str(is_successful) + ';from;' + str(client_address) + ";coord;" + str(coords)
+                    client_socket.sendto(msg.encode('utf-8'), server_address)
+
+                    if has_game_ended(board):
+                        print("GAME ENDED, DEFEAT")
+                        client_socket.sendto("end_you_won".encode('utf-8'), server_address)
+                        play_again()
+                except UnboundLocalError:
+                    continue
+
+            
