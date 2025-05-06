@@ -1,3 +1,4 @@
+import ast
 import socket
 
 from client_helpers import *
@@ -105,5 +106,23 @@ def main():
                         play_again()
                 except UnboundLocalError:
                     continue
+            elif response.lower().startswith("update"):
+                array = response.split(";")
+                coords = array[1]
+                result = array[2]
 
+                coords_array = ast.literal_eval(coords)
+                clear_console()
+                print("=" * 80)
+
+
+                if result == "True":
+                    print("Shoot on", coords_array, "is a HIT!")
+                    sign = "H"
+                else:
+                    print("Shoot on", coords_array, "is a MISS!")
+                    sign = "M"
+
+                update_board(shots_board, int(coords_array[0]), int(coords_array[1]), sign)
+                print_board(board, shots_board)
             
