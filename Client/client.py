@@ -125,4 +125,14 @@ def main():
 
                 update_board(shots_board, int(coords_array[0]), int(coords_array[1]), sign)
                 print_board(board, shots_board)
-            
+            elif response.lower() == "winner":
+                print("YOU WON!!!")
+                play_again()
+            elif response == "end":
+                play_again()
+            else:
+                print("Waiting...")
+    except socket.error as e:
+        print(f"Socket error: {e}")
+    finally:
+        client_socket.close()
