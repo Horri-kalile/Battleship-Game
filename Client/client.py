@@ -136,3 +136,19 @@ def main():
         print(f"Socket error: {e}")
     finally:
         client_socket.close()
+
+def play_again():
+    print("Do you want to play again?")
+    res = input("Enter Y or N: ")
+
+    if res.lower() in ['y', 'yes', 'continue']:
+        main()
+    elif res.lower() in ['n','no', 'dont', 'exit', 'e', 'q']:
+        exit()
+    else:
+        print("Invalid input!")
+        play_again()
+
+
+if __name__ == "__main__":
+    main()
