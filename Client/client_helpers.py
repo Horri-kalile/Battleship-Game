@@ -82,11 +82,21 @@ def generate_shots_board(rows, cols):
 def print_board(board, shot_board):
     separator = "=" * 80
     print(separator, "\n")
-    print("Your board", "\t" * 4, "Your shots")
-    print("  1 2 3 4 5 6 7 8 9 10 			       1 2 3 4 5 6 7 8 9 10")
-    for rowB, rowS in zip(board, shot_board):
-        print(board.index(rowB) + 1, " ".join(rowB), "\t" * 3, board.index(rowB) + 1, " ".join(rowS))
+
+    print("Your board" + " " * 20 + "Your shots")
+    
+    # Column headers, with one space in top-left corner
+    header_left = "   " + " ".join(str(i) for i in range(1, 11))
+    header_right = "  " + " ".join(str(i) for i in range(1, 11))
+    print(f"{header_left}     {header_right}")
+
+    for i in range(10):
+        left = f"{i+1:>2} " + " ".join(board[i])
+        right = f"{i+1:>2} " + " ".join(shot_board[i])
+        print(f"{left}     {right}")
+
     print(separator, "\n")
+
 
 
 def show_rules():
