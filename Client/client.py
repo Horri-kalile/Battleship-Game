@@ -15,6 +15,7 @@ def main():
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_address = (IP, PORT)
+    client_socket.settimeout(20)
 
     try:
         client_socket.connect(server_address)
@@ -23,7 +24,11 @@ def main():
         client_socket.sendto("connect".encode('utf-8'), server_address)
 
         while True:
-            response, _ = client_socket.recvfrom(BUF_SIZE)
+            try:
+                response, _ = client_socket.recvfrom(BUF_SIZE)
+            except socket.timeout:
+                print("No response from server. Server might be unavailable. Exiting...")
+                break
             response = response.decode('utf-8')
 
             if response == "connect":
