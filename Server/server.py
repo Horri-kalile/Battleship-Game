@@ -66,7 +66,10 @@ def main():
                     print("Room", room.id, "|Sending shoot verification to:", other_address)
 
                     mes = "check" + str(coords) + ';' + room.id
-                    server_socket.sendto(mes.encode('utf-8'), other_address)
+                    try:
+                        server_socket.sendto(mes.encode('utf-8'), other_address)
+                    except socket.error:
+                        print(f"Failed to send message to {other_address}, assuming disconnect.")
 
             elif mess.lower().startswith("result"):
                 array = mess.split(';')
@@ -82,7 +85,11 @@ def main():
                     print("Room", room.id, "|Updating boards", other_address)
 
                     mes = "update;" + coords + ";" + str(result) + ";" + room.id
-                    server_socket.sendto(mes.encode('utf-8'), other_address)
+                    try:
+                        server_socket.sendto(mes.encode('utf-8'), other_address)
+                    except socket.error:
+                        print(f"Failed to send message to {other_address}, assuming disconnect.")
+
                 if result == "False":
                     server_socket.sendto("wait".encode('utf-8'), other_address)
                     server_socket.sendto("shoot".encode('utf-8'), sender_address)
