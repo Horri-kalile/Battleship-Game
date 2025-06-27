@@ -1,4 +1,5 @@
 import ast
+import platform
 import socket
 
 from client_helpers import *
@@ -18,7 +19,8 @@ def main():
     client_socket.settimeout(20)
 
     try:
-        client_socket.connect(server_address)
+        if platform.system() == "Windows":
+            client_socket.connect(server_address)
         client_address = client_socket.getsockname()
 
         client_socket.sendto("connect".encode('utf-8'), server_address)
