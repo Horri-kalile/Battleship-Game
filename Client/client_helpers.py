@@ -1,6 +1,32 @@
 import os
+import signal
+import threading
+import time
 import client_boardsets as boards
 import client_make_board as myboard
+
+class TimeoutError(Exception):
+    pass
+
+def timeout_input(prompt, timeout=30):
+    """Input with timeout functionality"""
+    result = [None]
+    
+    def get_input():
+        try:
+            result[0] = input(prompt)
+        except:
+            pass
+    
+    input_thread = threading.Thread(target=get_input)
+    input_thread.daemon = True
+    input_thread.start()
+    input_thread.join(timeout)
+    
+    if input_thread.is_alive():
+        raise TimeoutError("Input timeout")
+    
+    return result[0]
 
 def has_game_ended(board):
     h_counter = 0
@@ -27,13 +53,21 @@ def is_ship_hit(board, x_coord, y_coord):
 
 def get_shot(shot_board):
     try:
-        print("Enter your shot")
-        x_coord = input("Enter x coordinate: ")
+        print("Enter your shot (you have 30 seconds)")
+        try:
+            x_coord = timeout_input("Enter x coordinate: ", 30)
+        except TimeoutError:
+            print("Time's up! You took too long to enter coordinates.")
+            return -1, -1, "timeout"
 
         if x_coord == "end":
             return -1, -1, True
 
-        y_coord = input("Enter y coordinate: ")
+        try:
+            y_coord = timeout_input("Enter y coordinate: ", 30)
+        except TimeoutError:
+            print("Time's up! You took too long to enter coordinates.")
+            return -1, -1, "timeout"
 
         if y_coord == "end":
             return -1, -1, True
