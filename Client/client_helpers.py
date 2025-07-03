@@ -89,24 +89,29 @@ def get_shot(shot_board):
         return get_shot(shot_board)
     
 def choose_board():
-    print("Create your board, you can use predefined layouts or create your own:")
-    print("Write 1 - if you want to create your own")
-    print("Write 2 - if you want to choose predefined set number 1")
-    print("Write 3 - if you want to choose predefined set number 2")
-    option = input("Your choice: ")
-    try:
-        option = int(option)
-        if option == 1:
-            board = myboard.make_user_board()
-        elif option == 2:
-            board = boards.board1
-        else:
-            board = boards.board2
-
-        return board
-    except ValueError:
-        print("Enter a number from 1 to 3")
-        choose_board()
+    while True:
+        print("Create your board, you can use predefined layouts or create your own:")
+        print("Write 1 - if you want to create your own")
+        print("Write 2 - if you want to choose predefined set number 1")
+        print("Write 3 - if you want to choose predefined set number 2")
+        option = input("Your choice: ")
+        try:
+            option = int(option)
+            if option == 1:
+                board = myboard.make_user_board()
+                return board
+            elif option == 2:
+                board = boards.board1
+                return board
+            elif option == 3:
+                board = boards.board2
+                return board
+            else:
+                print("Invalid choice! Please enter 1, 2, or 3.")
+                continue
+        except ValueError:
+            print("Invalid input! Please enter a number from 1 to 3.")
+            continue
 
 
 def generate_shots_board(rows, cols):
