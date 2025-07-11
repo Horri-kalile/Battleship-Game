@@ -34,8 +34,11 @@ def main():
             try:
                 response, _ = client_socket.recvfrom(BUF_SIZE)
             except socket.timeout:
-                # Socket timeout only happens for real connection issues now
-                print("Connection lost. Server might be unavailable. Exiting...")
+                # Socket timeout only happens during gameplay (when timeout is set)
+                if game_ready and my_room_id:
+                    print("Connection lost during gameplay. Server might be unavailable. Exiting...")
+                else:
+                    print("Connection lost. Server might be unavailable. Exiting...")
                 break
             response = response.decode('utf-8')
 
@@ -60,6 +63,10 @@ def main():
                 
                 print("Board setup complete! Waiting for opponent to be ready...")
                 
+                # Remove socket timeout while waiting for opponent to be ready
+                # This allows players to take as long as they need to set up their boards
+                client_socket.settimeout(None)
+                
                 # Send ready signal to server
                 ready_message = f"ready;{my_room_id}"
                 client_socket.sendto(ready_message.encode('utf-8'), server_address)
@@ -70,6 +77,9 @@ def main():
                 action = response.split(';')[2]
 
                 print("Both players ready! GAME BEGINS")
+                
+                # Restore socket timeout for actual gameplay
+                client_socket.settimeout(60)
 
                 if action == "wait":
                     print("Enemy's turn...")
@@ -205,8 +215,18 @@ def main():
                 play_again()
             else:
                 print("Waiting...")
+    except socket.timeout:
+        # This catches socket timeouts that might not be caught in the main loop
+        if game_ready and my_room_id:
+            print("Connection lost during gameplay. Server might be unavailable. Exiting...")
+        else:
+            print("Connection lost. Server might be unavailable. Exiting...")
     except socket.error as e:
-        print(f"Socket error: {e}")
+        # Handle other socket errors (like server forcibly closing connection)
+        if game_ready and my_room_id:
+            print("Connection lost during gameplay. Server might be unavailable. Exiting...")
+        else:
+            print("Connection lost. Server might be unavailable. Exiting...")
     finally:
         stop_heartbeat()
         client_socket.close()
