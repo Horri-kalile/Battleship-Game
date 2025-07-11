@@ -31,13 +31,21 @@ def place_ship(board, ship_size):
                 print("Entered coordinates are out of the board range. Try again.")
                 continue
 
-            orientation = input("Enter the ship orientation (h - horizontal, v - vertical): ")
+            # Keep asking for orientation until a valid one is entered
+            while True:
+                orientation = input("Enter the ship orientation (h - horizontal, v - vertical): ").strip().lower()
+                if orientation in ['h', 'horizontal', 'v', 'vertical']:
+                    # Normalize to single letter
+                    orientation = 'h' if orientation in ['h', 'horizontal'] else 'v'
+                    break
+                else:
+                    print("Invalid orientation! Please enter 'h' for horizontal or 'v' for vertical.")
 
             if is_valid_position(board, x, y, ship_size, orientation):
-                if orientation.lower() == "h":
+                if orientation == "h":
                     for i in range(ship_size):
                         board[x][y + i] = str(ship_size)
-                elif orientation.lower() == "v":
+                elif orientation == "v":
                     for i in range(ship_size):
                         board[x + i][y] = str(ship_size)
                 break
